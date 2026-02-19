@@ -1,6 +1,7 @@
 from deezer import get_deezer_tracks
 from youtube import get_youtube_service, create_playlist, add_videos
 
+
 if __name__ == "__main__":
     playlist_id_deezer = "14838804003"
 
