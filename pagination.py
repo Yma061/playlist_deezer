@@ -3,23 +3,37 @@ import requests
 def get_deezer_tracks(playlist_id):
     tracks = []
     
-    url = f"https://api.deezer.com/playlist/{playlist_id}"
-    response = requests.get(url).json()
+    # 1️⃣ Récupérer infos playlist
+    playlist_url = f"https://api.deezer.com/playlist/{playlist_id}"
+    playlist_response = requests.get(playlist_url).json()
     
-    # Première page
-    data = response["tracks"]
+    # 2️⃣ Récupérer URL tracklist officielle
+    tracklist_url = playlist_response["tracklist"]
     
-    while True:
-        # Ajouter les morceaux de la page actuelle
+    while tracklist_url:
+        response = requests.get(tracklist_url)
+        
+        if response.status_code != 200:
+            print("Erreur API :", response.status_code)
+            break
+        
+        data = response.json()
+        
         for track in data["data"]:
             titre = track["title"]
             artiste = track["artist"]["name"]
             tracks.append(f"{titre} {artiste}")
         
-        # Vérifier s'il y a une page suivante
-        if "next" in data:
-            data = requests.get(data["next"]).json()
-        else:
-            break
+        # Pagination
+        tracklist_url = data.get("next")
     
     return tracks
+
+
+if __name__ == "__main__":
+    playlist_id = "14838804003"
+    
+    tracks = get_deezer_tracks(playlist_id)
+    
+    print(f"{len(tracks)} morceaux récupérés")
+
