@@ -9,7 +9,7 @@ def get_youtube_service():
         scopes
     )
 
-    credentials = flow.run_local_server(port=0)
+    credentials = flow.run_console()
     return build("youtube", "v3", credentials=credentials)
 
 
